@@ -17,11 +17,12 @@ export const initSourceMaps = async opts => {
 	if (!opts || !opts.sourceMapBundle) {
 		throw new Error('Please specify sourceMapBundle option parameter');
 	}
+	options = opts;
 };
 
 export const getStackTrace = async error => {
 	if (!options) {
-		throw new Error('Please initialise with options first');
+		throw new Error('Please firstly call initSourceMaps with options');
 	}
 	if (!sourceMapper) {
 		sourceMapper = await createSourceMapper();
@@ -51,6 +52,14 @@ export const getStackTrace = async error => {
 const createSourceMapper = async () => {
 	const path = `${RNFS.MainBundlePath}/${options.sourceMapBundle}`;
 	try {
+		const fileExists = await RNFS.exists(path);
+		if (!fileExists) {
+			throw new Error(__DEV__ ?
+				'Unable to read source maps in DEV mode' :
+				`Unable to read source maps, possibly invalid sourceMapBundle file, please check that it exists here: ${RNFS.MainBundlePath}/${options.sourceMapBundle}`
+			);
+		}
+
 		const mapContents = await RNFS.readFile(path, 'utf8');
 		const sourceMaps = JSON.parse(mapContents);
 		const mapConsumer = new SourceMap.SourceMapConsumer(sourceMaps);
