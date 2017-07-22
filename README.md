@@ -2,7 +2,8 @@
 Utilities to quickly add support of source-maps to your React Native project
 
 As you probably already now, React Native minifies release code. 
-It's perfect for bundle size and execution speed. But it can become a real pain to find production bug in such code.
+It's perfect for bundle size and execution speed. 
+But it can become a real pain to find production bug in such code.
 
 For example error stack trace in your logging system can look like that:
 ```
@@ -12,9 +13,17 @@ For example error stack trace in your logging system can look like that:
 ...
 ```
 
-And...
+And....
 It's useless just to know about an error without a possibility to find it in the exact place of code. So we need source maps.
 By using source maps, we can map the code being executed to the original code source files, making fixing bug much, much easier.
+
+To make it look like this:
+```
+0:file:///var/containers/Bundle/Application/B2C0D7FF-6CA3-4298-BDBF-10285CD4D88D/Debitoor.app/main.jsbundle:947:1763
+1:u@file:///var/containers/Bundle/Application/B2C0D7FF-6CA3-4298-BDBF-10285CD4D88D/Debitoor.app/main.jsbundle:199:137
+2:file:///var/containers/Bundle/Application/B2C0D7FF-6CA3-4298-BDBF-10285CD4D88D/Debitoor.app/main.jsbundle:199:891
+...
+```
 
 Firstly I'd like to mention that React Native CLI has a flag to build source maps alongside with JS code bundle.
 
