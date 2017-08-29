@@ -1,6 +1,7 @@
 import RNFS from "react-native-fs";
 import SourceMap from "source-map";
 import StackTrace from "stacktrace-js";
+import { Platform } from "react-native";
 
 let sourceMapper = undefined;
 let options = undefined;
@@ -28,7 +29,7 @@ export const getStackTrace = async error => {
 		sourceMapper = await createSourceMapper();
 	}
 	try {
-		const minStackTrace = await StackTrace.fromError(error);
+		const minStackTrace = await StackTrace.fromError(error, {offline: true});
 		const stackTrace = minStackTrace.map(row => {
 			const mapped = sourceMapper(row);
 			const source = mapped.source || "";
@@ -50,17 +51,17 @@ export const getStackTrace = async error => {
 };
 
 const createSourceMapper = async () => {
-	const path = `${RNFS.MainBundlePath}/${options.sourceMapBundle}`;
+	const SoureMapBundlePath = Platform.OS === "ios" ? `${RNFS.MainBundlePath}/${options.sourceMapBundle}` : options.sourceMapBundle;
 	try {
-		const fileExists = await RNFS.exists(path);
+		const fileExists = (Platform.OS === "ios") ? (await RNFS.exists(SoureMapBundlePath)) : (await RNFS.existsAssets(SoureMapBundlePath));
 		if (!fileExists) {
 			throw new Error(__DEV__ ?
 				'Unable to read source maps in DEV mode' :
-				`Unable to read source maps, possibly invalid sourceMapBundle file, please check that it exists here: ${RNFS.MainBundlePath}/${options.sourceMapBundle}`
+				`Unable to read source maps, possibly invalid sourceMapBundle file, please check that it exists here: ${SoureMapBundlePath}`
 			);
 		}
 
-		const mapContents = await RNFS.readFile(path, 'utf8');
+		const mapContents = (Platform.OS === "ios") ? (await RNFS.readFile(SoureMapBundlePath, 'utf8')) : (await RNFS.readFileAssets(SoureMapBundlePath, 'utf8'));
 		const sourceMaps = JSON.parse(mapContents);
 		const mapConsumer = new SourceMap.SourceMapConsumer(sourceMaps);
 

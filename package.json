@@ -1,6 +1,6 @@
 {
   "name": "react-native-source-maps",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utilities to easily add support of Source Maps to your React Native project",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "author": "Philip Shurpik",
   "license": "MIT",
   "dependencies": {
-    "react-native-fs": "1.5.1",
+    "react-native-fs": "^2.3.3",
     "source-map": "0.5.6",
     "stacktrace-js": "1.3.1"
   },
