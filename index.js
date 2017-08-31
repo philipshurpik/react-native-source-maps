@@ -29,7 +29,14 @@ export const getStackTrace = async error => {
 		sourceMapper = await createSourceMapper();
 	}
 	try {
-		const minStackTrace = await StackTrace.fromError(error, {offline: true});
+		let minStackTrace;
+		
+		if (Platform.OS === "ios") {
+			minStackTrace = await StackTrace.fromError(error);
+		} else {
+			minStackTrace = await StackTrace.fromError(error, { offline: true });
+		}
+		
 		const stackTrace = minStackTrace.map(row => {
 			const mapped = sourceMapper(row);
 			const source = mapped.source || "";
