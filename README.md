@@ -51,6 +51,34 @@ We need to modify this script and add one line:
 ```
 It can be done with simple patching of this file in npm postinstall script. Or creating custom bundle script.
 
+For Android builds, add this line to the build.gradle under app module to make js bundle name same with iOS build:
+```
+project.ext.react = [
+    bundleAssetName: "main.jsbundle",
+]
+```
+Then edit Android packager script: ./node_modules/react-native/react.gradle
+
+and you need to add "--sourcemap-output" and bundle map file parameter to the build script,
+```
+def jsBundleMapFile = "${jsBundleFile}.map"
+"--sourcemap-output", jsBundleMapFile
+```
+
+for example:
+```
+def jsBundleMapFile = "${jsBundleFile}.map"
+
+def devEnabled = !targetName.toLowerCase().contains("release")
+if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    commandLine("cmd", "/c", *nodeExecutableAndArgs, "node_modules/react-native/local-cli/cli.js", "bundle", "--platform", "android", "--dev", "${devEnabled}",
+            "--reset-cache", "--entry-file", entryFile, "--bundle-output", jsBundleFile, "--assets-dest", resourcesDir, "--sourcemap-output", jsBundleMapFile, *extraPackagerArgs)
+} else {
+    commandLine(*nodeExecutableAndArgs, "node_modules/react-native/local-cli/cli.js", "bundle", "--platform", "android", "--dev", "${devEnabled}",
+            "--reset-cache", "--entry-file", entryFile, "--bundle-output", jsBundleFile, "--assets-dest", resourcesDir, "--sourcemap-output", jsBundleMapFile, *extraPackagerArgs)
+}
+```
+
 ##### 2. Install react-native-source-maps module
 This module was built to map minified sources to original JS files. 
 And to solve our pain to find actual place where an error occurred. 
