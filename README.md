@@ -1,7 +1,7 @@
 # react-native-source-maps
 Utilities to quickly add support of source-maps to your React Native project
 
-As you probably already now, React Native minifies release code. 
+As you probably already know, React Native minifies release code. 
 It's perfect for bundle size and execution speed. 
 But it can become a real pain to find production bug in such code.
 
